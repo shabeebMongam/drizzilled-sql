@@ -1,21 +1,23 @@
+import { db } from "@/server/db/drizzle";
 
-const mockUrls = [
-  "https://k3kf98rd3x.ufs.sh/f/J8B8pafVpZXlokBPWRbu0PCpJoIWjzDB7FY1d6aTxgEeStUf",
-  "https://k3kf98rd3x.ufs.sh/f/J8B8pafVpZXlcp5tQTCAeXMs2KITqtfmUHLZvNzboE4yYnd0",
-  "https://k3kf98rd3x.ufs.sh/f/J8B8pafVpZXlzbWUSXIhe4FyhWJbjoAXfn3lqdawir10Vck7",
-  "https://k3kf98rd3x.ufs.sh/f/J8B8pafVpZXlCJfPdRAPRpN8jKfWv0LuZnyXgwM4l1UAHe2x"
-]
 
-const mockImages = mockUrls.map((url, index) => ({ id: index + 1, url }))
+export default async function HomePage() {
 
-export default function HomePage() {
+  const images = await db.query.images.findMany({
+    orderBy: (model, { desc }) => desc(model.id)
+  })
+  console.log(images)
+
   return (
     <main>
       <div className="flex flex-wrap gap-4">
         {
-          [...mockImages, ...mockImages, ...mockImages].map((image) => (
-            <div key={image.id} className="w-48 ">
-              <img src={image.url} alt="image" />
+          [...images, ...images, ...images].map((image, index) => (
+            <div key={image.id + "-" + index} className="w-48 flex flex-col ">
+              <img src={image.url ?? undefined} alt="image" />
+              <div>
+                {image.name}
+              </div>
             </div>
           )
           )
